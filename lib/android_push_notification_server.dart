@@ -8,7 +8,6 @@ import 'dart:typed_data';
 import 'package:tuple/tuple.dart';
 
 class PushNotificationServer {
-
   ServerSocket _serverSocket;
   List<Tuple2<Socket, List<String>>> _sockets;
   List<String> _categories;
@@ -21,34 +20,32 @@ class PushNotificationServer {
   }
 
   Iterable<Tuple2<Socket, List<String>>> _getSockets([String category]) {
-    return category == null ?
-        _sockets :
-        _sockets.where((socket) => socket.item2.contains(category)).toList();
+    return category == null
+        ? _sockets
+        : _sockets.where((socket) => socket.item2.contains(category)).toList();
   }
 
   int clientCount([String category]) {
     return _getSockets(category).length;
   }
 
-  void sendPushNotification(String title, String message, {String uri, String icon, String category}) {
+  void sendPushNotification(String title, String message,
+      {String uri, String icon, String category}) {
     Map<String, dynamic> pushNotification = {
       'title': title,
       'message': message
     };
-    <String, String>{
-      'uri': uri,
-      'icon': icon
-    }.forEach((name, param) {
+    <String, String>{'uri': uri, 'icon': icon}.forEach((name, param) {
       if (param != null) {
         pushNotification[name] = param;
       }
     });
-    _getSockets(category).forEach((socket) =>
-        socket.item1.writeln(jsonEncode(pushNotification))
-    );
+    _getSockets(category).forEach(
+        (socket) => socket.item1.writeln(jsonEncode(pushNotification)));
   }
 
-  PushNotificationServer._(ServerSocket serverSocket, [List<String> categories]) {
+  PushNotificationServer._(ServerSocket serverSocket,
+      [List<String> categories]) {
     _categories = categories == null ? <String>[] : categories;
     _serverSocket = serverSocket;
     _sockets = <Tuple2<Socket, List<String>>>[];
@@ -59,8 +56,10 @@ class PushNotificationServer {
         String category = String.fromCharCodes(data);
         category = category.substring(0, category.length - 1);
         List<String> clientCategories = socketEntry.item2;
-        if (_categories.contains(category) && !clientCategories.contains(category)) {
-          clientCategories.add(category);
+        if (_categories.contains(category)) {
+          if (!clientCategories.contains(category)) {
+            clientCategories.add(category);
+          }
         } else {
           _closeSocket(socket);
         }
@@ -71,11 +70,10 @@ class PushNotificationServer {
     });
   }
 
-  static Future<PushNotificationServer> initializeServer(int port, List<String> categories) async {
+  static Future<PushNotificationServer> initializeServer(
+      int port, List<String> categories) async {
     return PushNotificationServer._(
-        await ServerSocket.bind(InternetAddress.anyIPv4, port),
-        categories
-    );
+        await ServerSocket.bind(InternetAddress.anyIPv4, port), categories);
   }
 
   void _closeSocket(Socket socket) {
