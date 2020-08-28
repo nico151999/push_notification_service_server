@@ -58,8 +58,9 @@ class PushNotificationServer {
       socket.listen((Uint8List data) {
         String category = String.fromCharCodes(data);
         category = category.substring(0, category.length - 1);
-        if (_categories.contains(category)) {
-          socketEntry.item2.add(category);
+        List<String> clientCategories = socketEntry.item2;
+        if (_categories.contains(category) && !clientCategories.contains(category)) {
+          clientCategories.add(category);
         } else {
           _closeSocket(socket);
         }
