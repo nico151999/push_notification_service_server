@@ -61,11 +61,12 @@ class PushNotificationServer {
             clientCategories.add(category);
           }
         } else {
-          _closeSocket(socket);
+          _finishSocket(socketEntry);
         }
       }, onDone: () {
-        _closeSocket(socket);
-        _sockets.remove(socketEntry);
+        _finishSocket(socketEntry);
+      }, onError: () {
+        _finishSocket(socketEntry);
       });
     });
   }
@@ -76,9 +77,10 @@ class PushNotificationServer {
         await ServerSocket.bind(InternetAddress.anyIPv4, port), categories);
   }
 
-  void _closeSocket(Socket socket) {
+  void _finishSocket(Tuple2<Socket, List<String>> socketEntry) {
     try {
-      socket.close();
+      socketEntry.item1.close();
     } on SocketException {}
+    _sockets.remove(socketEntry);
   }
 }
