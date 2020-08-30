@@ -65,7 +65,7 @@ class PushNotificationServer {
         }
       }, onDone: () {
         _finishSocket(socketEntry);
-      }, onError: () {
+      }, onError: (error) {
         _finishSocket(socketEntry);
       });
     });
