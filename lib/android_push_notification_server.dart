@@ -37,7 +37,7 @@ class PushNotificationServer {
   void sendPushNotification(String title, String message, {String uri, String icon, String package, String channel}) {
     Map<String, dynamic> notification = {
       'title': title,
-      'message': message
+      'content': message
     };
     <String, String>{'uri': uri, 'icon': icon}.forEach((name, param) {
       if (param != null) {
@@ -48,7 +48,12 @@ class PushNotificationServer {
       'push_notification': notification
     };
     _getSockets(package, channel).forEach(
-        (socket) => socket.item1.writeln(jsonEncode(pushNotification))
+      (socket) {
+        socket.item2.keys.forEach((package) {
+          notification['receiver'] = package;
+          socket.item1.writeln(jsonEncode(pushNotification));
+        });
+      }
     );
   }
 
@@ -86,7 +91,7 @@ class PushNotificationServer {
             break;
           case 'clients':
             try {
-              socketEntry.item2.addAll(rootJson['clients']);
+              socketEntry.item2.addAll(Map.from(rootJson['clients']));
             } on TypeError {
               _finishSocket(socketEntry);
             }

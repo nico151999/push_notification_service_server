@@ -16,7 +16,7 @@ class NotificationRunner {
   static final Map<String, dynamic> _options = {
     's': Tuple2('Send message', [
       Tuple3('p', 'target package', false),
-      Tuple3('c', 'target channel', false),
+      Tuple3('c', 'target channel (senseless if no target package was specified)', false),
       Tuple3('t', 'notification title', true),
       Tuple3('m', 'notification message', true),
       Tuple3('u', 'URI that\'s opened when notification is clicked by the user', false),
