@@ -76,7 +76,7 @@ class PushNotificationServer {
             }
             break;
           case 'channel_subscription':
-            Map<String, String> json = rootJson['channel_subscription'];
+            Map<String, dynamic> json = Map.from(rootJson['channel_subscription']);
             String package = json['package'];
             String channel = json['channel'];
             Map<String, List<String>> packageChannels = socketEntry.item2;
@@ -91,7 +91,11 @@ class PushNotificationServer {
             break;
           case 'clients':
             try {
-              socketEntry.item2.addAll(Map.from(rootJson['clients']));
+              socketEntry.item2.addAll(
+                  Map.from(rootJson['clients']).map(
+                          (key, value) => MapEntry<String, List<String>>(key, List<String>.from(value))
+                  )
+              );
             } on TypeError {
               _finishSocket(socketEntry);
             }

@@ -96,7 +96,7 @@ String getInput(Tuple3 tuple3) {
   String input = stdin.readLineSync(encoding: Encoding.getByName('utf-8'));
   if (tuple3.item3 && input.length == 0) {
     print('This selection is not optional. Try again...');
-    getInput(tuple3);
+    return getInput(tuple3);
   }
   return input;
 }
