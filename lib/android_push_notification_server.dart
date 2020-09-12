@@ -75,6 +75,12 @@ class PushNotificationServer {
               packages[package] = <String>[];
             }
             break;
+          case 'application_unsubscription':
+            String package = rootJson['application_unsubscription']['package'];
+            if (package != null) {
+              socketEntry.item2.remove(package);
+            }
+            break;
           case 'channel_subscription':
             Map<String, dynamic> json = Map.from(rootJson['channel_subscription']);
             String package = json['package'];
